@@ -6,15 +6,17 @@
    Banyaknya pilihan drama Korea yang tersedia membuat pengguna sering kesulitan menentukan tontonan yang sesuai dengan minat atau preferensi mereka.
 2. **Kurangnya sistem rekomendasi berbasis isi yang relevan dan personal**  
    Sebagian besar rekomendasi hanya berdasarkan popularitas atau rating tanpa memperhatikan kesamaan konten dengan tontonan yang disukai pengguna sebelumnya.
-3. **Kurangnya integrasi teknologi Machine Learning dalam sistem rekomendasi drama Korea** 
+3. **Kurangnya integrasi teknologi Machine Learning dalam sistem rekomendasi drama Korea**
+   
    Masih terbatasnya pemanfaatan teknik machine learning dalam sistem penyaringan konten membuat hasil rekomendasi kurang adaptif dan tidak sepenuhnya mencerminkan ketertarikan pengguna terhadap konten tertentu.
 
 ### Goals
 1. **Menyediakan sistem rekomendasi drama Korea yang sesuai dengan preferensi pengguna**  
    Dengan mengolah informasi seperti genre, sinopsis, aktor, dan sutradara, sistem akan memberikan saran tontonan yang mirip dengan drama yang pernah disukai oleh pengguna.
-2. **Mengembangkan sistem rekomendasi berbasis konten yang relevan serta efisien** 
+2. **Mengembangkan sistem rekomendasi berbasis konten yang relevan serta efisien**
+   
    Sistem akan menyajikan rekomendasi berdasarkan fitur-fitur isi drama, bukan sekadar berdasarkan popularitas umum.
-3. **Menerapkan metode machine learning sederhana yang dapat diinterpretasikan**  
+4. **Menerapkan metode machine learning sederhana yang dapat diinterpretasikan**  
    Sistem rekomendasi ini akan menggunakan metode yang transparan dan mudah dipahami untuk menganalisis konten drama Korea, seperti TF-IDF dan Cosine Similarity.
    
 ### Solusi Approach
@@ -161,7 +163,7 @@ Kemiripan antar drama dihitung menggunakan **Cosine Similarity**, yang mengukur 
 | **Flower of Evil**                 | 0.038604       | 0.013721              | 0.044067| 0.064347                         | 1.000000       |
 
 #### Testing Model
-Setelah proses modeling selesai, tahap berikutnya adalah menguji bagaimana model memberikan rekomendasi berdasarkan drama tertentu yang dipilih sebagai input. Untuk pendekatan Content-Based Filtering, rekomendasi diberikan dengan menghitung kemiripan antar drama berdasarkan konten (genre, sinopsis, aktor, dll) menggunakan TF-IDF dan cosine similarity. Untuk melakukan pengujian model, digunakan potongan kode berikut.
+Setelah proses modeling selesai, tahap berikutnya adalah menguji bagaimana model memberikan rekomendasi berdasarkan drama tertentu yang dipilih sebagai input. Untuk pendekatan Content-Based Filtering, rekomendasi diberikan dengan menghitung kemiripan antar drama berdasarkan konten (genre, sinopsis, aktor, dll) menggunakan TF-IDF dan cosine similarity. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
 
 ```python
 content_based_recommendations('Moving', k=5)
@@ -179,19 +181,56 @@ Rekomendasi yang dihasilkan menunjukkan drama-drama dengan unsur genre  serupa s
 
 ### Popularity-Based Recommendation
 
-Pendekatan ini menyarankan drama yang paling populer secara keseluruhan, tanpa mempertimbangkan preferensi individu. Sistem ini berguna untuk pengguna baru atau ketika tidak tersedia data pengguna sama sekali (cold start problem).
+Sistem rekomendasi kedua yang digunakan adalah pendekatan Popularity-Based Recommendation, yaitu memberikan rekomendasi berdasarkan skor popularitas. Skor ini dihitung menggunakan kombinasi dari rating dan faktor-faktor lainnya seperti tahun rilis atau genre. Pendekatan ini cenderung memberikan rekomendasi yang bersifat general, berdasarkan kesukaan mayoritas pengguna.
 
 - **Menentukan Popularity Score**
-popularity_score dibuat dari kombinasi fitur yang telah dinormalisasi: rating_score, year_score, dan episode_score. Skor ini mewakili seberapa populer dan relevan suatu drama secara umum.
+popularity_score dibuat dari kombinasi fitur yang telah dinormalisasi: rating_score, year_score, dan episode_score. Skor ini mewakili seberapa populer dan relevan suatu drama secara umum. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
 
-- **Filter Berdasarkan Minimum Rating**
-Untuk menjaga kualitas rekomendasi, drama dengan rating di bawah 8.0 tidak dimasukkan dalam rekomendasi.
+- **Rekomendasi Populer Berdasarkan Rating**
+  
+Rekomendasi diberikan kepada pengguna berdasarkan drama-drama dengan rating tertinggi, tanpa mempertimbangkan preferensi personal atau genre. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
+```python
+popularity_based_recommendations(k=5, min_rating=8.5)
+```
+##### Output
+| Title                             | Genre                                     | Rating | Year of Release | Popularity Score |
+|-----------------------------------|-------------------------------------------|--------|-----------------|------------------|
+| Twinkling Watermelon              | Romance, Youth, Drama, Fantasy            | 9.2    | 2023            | 0.884091         |
+| The Trauma Code: Heroes on Call   | Action, Comedy, Drama, Medical            | 9.1    | 2025            | 0.883874         |
+| Moving                            | Action, Thriller, Mystery, Supernatural   | 9.1    | 2023            | 0.865693         |
+| Study Group                       | Action, Thriller, Comedy, Youth           | 9.0    | 2025            | 0.863961         |
+| Lovely Runner                     | Music, Comedy, Romance, Fantasy           | 9.0    | 2024            | 0.854870         |
 
 - **Filter Berdasarkan Genre**
-Pengguna dapat memilih genre tertentu (misal: "Romance") untuk memfilter daftar rekomendasi lebih lanjut.
+  
+Rekomendasi ini disaring berdasarkan genre tertentu, misalnya "Romance", kemudian dipilih drama dengan rating dan skor popularitas tertinggi di genre tersebut. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
+```python
+popularity_based_recommendations(k=5, genre_filter='Romance')
+```
+##### Output
+| Title                          | Genre                                       | Rating | Year of Release | Popularity Score |
+|--------------------------------|---------------------------------------------|--------|-----------------|------------------|
+| Twinkling Watermelon           | Romance, Youth, Drama, Fantasy              | 9.2    | 2023            | 0.884091         |
+| Lovely Runner                  | Music, Comedy, Romance, Fantasy             | 9.0    | 2024            | 0.854870         |
+| Hospital Playlist 2           | Friendship, Romance, Life, Medical          | 9.1    | 2021            | 0.832359         |
+| Alchemy of Souls              | Action, Historical, Romance, Fantasy        | 9.0    | 2022            | 0.830628         |
+| Extraordinary Attorney Woo    | Law, Romance, Life, Drama                   | 9.0    | 2022            | 0.827597         |
 
-- **Menyajikan Top-N Rekomendasi**
-Drama yang lolos filter diurutkan berdasarkan popularity_score dan Top-N drama ditampilkan.
+- **Rekomendasi Populer Berdasarkan Rating & Genre**
+  
+Pendekatan gabungan ini mempertimbangkan rating tinggi dan genre tertentu, seperti drama bertema “Family”. Ini mendekati minat spesifik pengguna terhadap tipe konten tertentu. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
+```python
+popularity_based_recommendations(k=5, min_rating=8.5, genre_filter='Family')
+```
+##### Output
+| Title               | Genre                                     | Rating | Year of Release | Popularity Score |
+|---------------------|--------------------------------------------|--------|-----------------|------------------|
+| Move to Heaven      | Life, Drama, Family                        | 9.2    | 2021            | 0.852273         |
+| The Good Bad Mother | Comedy, Life, Drama, Family                | 8.9    | 2023            | 0.818290         |
+| Navillera           | Friendship, Life, Drama, Family            | 9.0    | 2021            | 0.810931         |
+| My Mister           | Psychological, Life, Drama, Family         | 9.1    | 2018            | 0.794481         |
+| Once Again          | Comedy, Romance, Drama, Family             | 8.6    | 2020            | 0.778247         |
+
 
 ### Kelebihan dan Kekurangan
 Dua pendekatan sistem rekomendasi yang telah diterapkan:
