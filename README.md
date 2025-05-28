@@ -138,7 +138,7 @@ Seluruh fitur yang telah dinormalisasi (`rating`, `recency`, `jumlah episode`) d
 | Max       | 9.200  | 1.000        | 1.000      | 1.000          | 0.884            |
 
 
-## 🤖 Model Development
+## 🤖 Modeling & Result
 Pada tahap ini, sistem rekomendasi dikembangkan untuk memberikan rekomendasi drama Korea berdasarkan dua pendekatan yang berbeda: Content-Based Filtering dan Popularity-Based Recommendation. Kedua pendekatan ini dirancang untuk memberikan solusi atas masalah rekomendasi, baik berdasarkan kesamaan konten maupun berdasarkan tingkat popularitas umum.
 ### Content Based Filtering
 
@@ -148,7 +148,8 @@ Content-Based Filtering merekomendasikan item berdasarkan kemiripan fitur dengan
   
 Untuk mengubah teks menjadi vektor numerik, digunakan teknik TF-IDF (Term Frequency-Inverse Document Frequency) pada fitur gabungan `combined_features`. Teknik ini menekankan kata-kata penting yang unik pada setiap drama dan mengurangi pengaruh kata-kata umum.
 
-- Menghitung Cosine Similarity
+- **Menghitung Cosine Similarity**
+  
 Kemiripan antar drama dihitung menggunakan **Cosine Similarity**, yang mengukur sudut antar vektor TF-IDF. Semakin kecil sudutnya, semakin mirip konten dua drama tersebut. Hasilnya disimpan dalam dataframe `cosine_sim_df` yang menyimpan skor kesamaan antar semua pasangan drama.
 #### Tabel Cosine Silimarity
 | Title                               | Move to Heaven | Twinkling Watermelon | Moving  | The Trauma Code: Heroes on Call | Flower of Evil |
@@ -159,6 +160,45 @@ Kemiripan antar drama dihitung menggunakan **Cosine Similarity**, yang mengukur 
 | **The Trauma Code: Heroes on Call**| 0.015090       | 0.035651              | 0.068624| 1.000000                         | 0.064347       |
 | **Flower of Evil**                 | 0.038604       | 0.013721              | 0.044067| 0.064347                         | 1.000000       |
 
+#### Testing Model
+Setelah proses modeling selesai, tahap berikutnya adalah menguji bagaimana model memberikan rekomendasi berdasarkan drama tertentu yang dipilih sebagai input. Untuk pendekatan Content-Based Filtering, rekomendasi diberikan dengan menghitung kemiripan antar drama berdasarkan konten (genre, sinopsis, aktor, dll) menggunakan TF-IDF dan cosine similarity. Untuk melakukan pengujian model, digunakan potongan kode berikut.
+
+```python
+content_based_recommendations('Moving', k=5)
+```
+##### Output
+| Title                | Genre                                      | Rating | Year of Release |
+|----------------------|---------------------------------------------|--------|-----------------|
+| Motel California     | Romance, Drama                              | 7.3    | 2025            |
+| Memorist             | Action, Thriller, Mystery, Supernatural     | 8.4    | 2020            |
+| My Father is Strange | Comedy, Romance, Drama, Family              | 8.6    | 2017            |
+| Pyramid Game         | Action, Thriller, Psychological, Drama      | 8.5    | 2024            |
+| Flex X Cop           | Action, Thriller, Mystery, Comedy           | 8.7    | 2024            |
+
+Rekomendasi yang dihasilkan menunjukkan drama-drama dengan unsur genre  serupa seperti Thriller, Action, dan Drama yang juga muncul dalam konten "Moving". Ini menunjukkan bahwa sistem bekerja dengan baik dalam mengidentifikasi kemiripan konten berdasarkan teks fitur.
+
+### Popularity-Based Recommendation
+
+Pendekatan ini menyarankan drama yang paling populer secara keseluruhan, tanpa mempertimbangkan preferensi individu. Sistem ini berguna untuk pengguna baru atau ketika tidak tersedia data pengguna sama sekali (cold start problem).
+
+- **Menentukan Popularity Score**
+popularity_score dibuat dari kombinasi fitur yang telah dinormalisasi: rating_score, year_score, dan episode_score. Skor ini mewakili seberapa populer dan relevan suatu drama secara umum.
+
+- **Filter Berdasarkan Minimum Rating**
+Untuk menjaga kualitas rekomendasi, drama dengan rating di bawah 8.0 tidak dimasukkan dalam rekomendasi.
+
+- **Filter Berdasarkan Genre**
+Pengguna dapat memilih genre tertentu (misal: "Romance") untuk memfilter daftar rekomendasi lebih lanjut.
+
+- **Menyajikan Top-N Rekomendasi**
+Drama yang lolos filter diurutkan berdasarkan popularity_score dan Top-N drama ditampilkan.
+
+### Kelebihan dan Kekurangan
+Dua pendekatan sistem rekomendasi yang telah diterapkan:
+| Pendekatan             | Kelebihan                                              | Kekurangan                                 |
+|------------------------|--------------------------------------------------------|--------------------------------------------|
+| Content-Based Filtering| Rekomendasi personal berdasarkan preferensi pengguna   | Tidak bisa merekomendasikan item baru (cold start) |
+| Popularity-Based       | Sederhana dan cocok untuk semua pengguna               | Tidak personal dan bias terhadap item populer atau lama |
 
 ## 📊 Evaluation
 ## Referensi
