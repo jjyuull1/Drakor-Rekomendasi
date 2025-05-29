@@ -67,8 +67,8 @@ Berikut adalah uraian dari masing-masing fitur dalam dataset:
 | Tags                | object    | Label tambahan, seperti tema, gaya cerita, dll.                          |
 | Actors              | object    | Daftar pemeran utama.                                                    |
 #### Kondisi Data
-- Berdasarkan pengecekan menggunakan df.isnull().sum(), tidak ditemukan missing value pada dataset. Hal ini mengindikasikan bahwa data sudah lengkap dan tidak memerlukan imputasi atau pengisian nilai yang hilang.
-- Hasil dari df.duplicated().sum() juga menunjukkan bahwa tidak terdapat data duplikat. Ini memastikan bahwa setiap drama direpresentasikan secara unik dalam dataset.
+- Berdasarkan pengecekan menggunakan `df.isnull().sum()`, tidak ditemukan missing value pada dataset. Hal ini mengindikasikan bahwa data sudah lengkap dan tidak memerlukan imputasi atau pengisian nilai yang hilang.
+- Hasil dari `df.duplicated().sum()` juga menunjukkan bahwa tidak terdapat data duplikat. Ini memastikan bahwa setiap drama direpresentasikan secara unik dalam dataset.
 
 ### Visualization & Analysis
 1. Distribusi Jumlah Drama Berdasarkan Tahun Rilis
