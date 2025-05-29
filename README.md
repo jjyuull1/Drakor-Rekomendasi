@@ -1,5 +1,13 @@
 # Laporan Proyek Machine Learning - Juli Arsi Sabrina
 ## 📌 Project Overview
+![drakor](https://github.com/user-attachments/assets/60ca8bc4-9cf6-4a9b-aa22-5f372accb33a)
+
+Dalam beberapa tahun terakhir, popularitas drama Korea (K-Drama) mengalami peningkatan yang signifikan, tidak hanya di kawasan Asia, tetapi juga secara global. Platform streaming seperti Netflix, Viu, dan Disney+ telah memperluas jangkauan K-Drama ke pasar internasional, menciptakan lonjakan konsumsi konten Korea secara besar-besaran. Berdasarkan laporan dari Korea Creative Content Agency (KOCCA), ekspor konten Korea, termasuk drama, meningkat lebih dari 13% pada tahun 2022, menunjukkan tren global yang terus berkembang.<sup>[1]</sup>
+
+Dengan semakin banyaknya judul drama yang dirilis setiap tahun, penonton sering kali merasa kesulitan dalam memilih tontonan yang sesuai dengan preferensi pribadi mereka. Dalam konteks ini, sistem rekomendasi berperan penting untuk membantu pengguna menemukan tayangan yang relevan dan menarik. Sistem ini dapat meningkatkan kepuasan pengguna serta mendorong engagement yang lebih tinggi terhadap platform.
+
+Salah satu pendekatan yang dapat digunakan adalah Content-Based Filtering. Pendekatan ini bekerja dengan menganalisis fitur-fitur dari setiap drama seperti sinopsis, genre, aktor, dan elemen naratif lainnya. Kemudian, sistem menghitung kemiripan antar item berdasarkan konten tersebut, sehingga dapat memberikan rekomendasi drama yang mirip dengan drama yang sebelumnya disukai oleh pengguna.<sup>[2]</sup> Pendekatan ini juga mengatasi masalah cold-start bagi pengguna baru, karena tidak memerlukan data dari pengguna lain untuk memberikan rekomendasi yang personal.
+
 ## 💼 Business Understanding
 ### Problem Statements
 1. **Kebingungan pengguna dalam memilih drama Korea yang sesuai**  
@@ -22,11 +30,15 @@
 ### Solusi Approach
 Untuk mencapai tujuan proyek ini, dua pendekatan utama dalam sistem rekomendasi akan digunakan dan dibandingkan:
 1. **Content-Based Filtering**  
-Pendekatan ini memberikan rekomendasi berdasarkan kemiripan konten antar drama Korea. Fitur-fitur seperti genre, sinopsis, pemeran, dan sutradara dianalisis menggunakan metode ekstraksi teks seperti TF-IDF, lalu dihitung kemiripannya menggunakan cosine similarity. Sistem ini bersifat personal, karena rekomendasi disesuaikan dengan konten drama yang telah dipilih pengguna.
-2. **Popularity-Based Recommendation**  
-Popularity-Based Recommendation adalah pendekatan sistem rekomendasi yang menyarankan item berdasarkan popularitasnya secara umum, tanpa mempertimbangkan preferensi atau riwayat pengguna secara personal. Sistem ini sederhana dan efektif ketika informasi pengguna tidak tersedia, atau saat ingin memberikan rekomendasi yang bersifat umum.
+Pendekatan dalam sistem rekomendasi yang menyarankan item kepada pengguna berdasarkan kesamaan fitur antara item yang pernah disukai dengan item lainnya. Dalam konteks rekomendasi drama Korea, pendekatan ini bekerja dengan menganalisis atribut-atribut seperti genre, sinopsis, aktor, sutradara, dan elemen naratif lainnya. Fitur-fitur teks seperti sinopsis atau deskripsi dapat diolah menggunakan teknik ekstraksi fitur seperti TF-IDF (Term Frequency–Inverse Document Frequency), yang mengubah teks menjadi representasi numerik. Setelah itu, sistem menghitung kemiripan antar item menggunakan cosine similarity, yaitu teknik yang mengukur sudut antar vektor representasi teks. Rekomendasi kemudian diberikan berdasarkan item yang paling mirip dengan apa yang pernah ditonton atau disukai pengguna.
 
-Dengan mengimplementasikan kedua pendekatan ini, sistem rekomendasi akan memberikan saran yang lebih personal releval, dan adaptif, sekaligus membandingkan efektivitas pendekatan berbasis konten dan kaloboratif dalam konteks penyaringan tontonan drama Korea.
+Sistem ini bersifat personal, karena rekomendasi tidak bergantung pada perilaku pengguna lain, melainkan pada karakteristik konten dari drama yang telah disukai sebelumnya.<sup>[2]</sup>
+
+
+2. **Popularity-Based Recommendation**  
+Pendekatan sistem rekomendasi yang menyarankan item berdasarkan tingkat popularitasnya secara umum, seperti rating tertinggi atau jumlah penonton terbanyak. Pendekatan ini tidak mempertimbangkan preferensi pribadi pengguna, tetapi efektif digunakan saat informasi pengguna belum tersedia.
+
+Meskipun tidak bersifat personal, metode ini mudah diimplementasikan dan sering menghasilkan rekomendasi yang relevan secara luas. Dalam proyek ini, pendekatan popularitas digunakan sebagai pembanding terhadap pendekatan berbasis konten, untuk mengevaluasi efektivitas rekomendasi drama Korea.<sup>[3]</sup>
 
 ## 📊 Data Understanding
 Dataset yang digunakan dalam proyek ini diperoleh dari Kaggle dengan judul: [Korean Dramas Dataset](https://www.kaggle.com/datasets/saikalbatyrbekova/korean-dramas-dataset-eda). Dataset ini berisi informasi tentang drama Korea yang diambil dari situs MyDramaList. Dataset tersedia dalam format CSV dan mencakup berbagai informasi dasar seputar 350 drama Korea (Jumlah baris data) dengan 9 fitur.
@@ -143,9 +155,6 @@ Seluruh fitur yang telah dinormalisasi (`rating`, `recency`, `jumlah episode`) d
 ## 🤖 Modeling & Result
 Pada tahap ini, sistem rekomendasi dikembangkan untuk memberikan rekomendasi drama Korea berdasarkan dua pendekatan yang berbeda: Content-Based Filtering dan Popularity-Based Recommendation. Kedua pendekatan ini dirancang untuk memberikan solusi atas masalah rekomendasi, baik berdasarkan kesamaan konten maupun berdasarkan tingkat popularitas umum.
 ### Content Based Filtering
-
-Content-Based Filtering merekomendasikan item berdasarkan kemiripan fitur dengan item yang disukai atau dipilih sebelumnya. Dalam proyek ini, fitur-fitur seperti `Genre`, `Tags`, `Actors` dan `Description` digunakan untuk mewakili konten setiap drama.
-
 -  **TF-IDF Vectorization**
   
 Untuk mengubah teks menjadi vektor numerik, digunakan teknik TF-IDF (Term Frequency-Inverse Document Frequency) pada fitur gabungan `combined_features`. Teknik ini menekankan kata-kata penting yang unik pada setiap drama dan mengurangi pengaruh kata-kata umum.
@@ -180,9 +189,6 @@ content_based_recommendations('Moving', k=5)
 Rekomendasi yang dihasilkan menunjukkan drama-drama dengan unsur genre  serupa seperti Thriller, Action, dan Drama yang juga muncul dalam konten "Moving". Ini menunjukkan bahwa sistem bekerja dengan baik dalam mengidentifikasi kemiripan konten berdasarkan teks fitur.
 
 ### Popularity-Based Recommendation
-
-Sistem rekomendasi kedua yang digunakan adalah pendekatan Popularity-Based Recommendation, yaitu memberikan rekomendasi berdasarkan skor popularitas. Skor ini dihitung menggunakan kombinasi dari rating dan faktor-faktor lainnya seperti tahun rilis atau genre. Pendekatan ini cenderung memberikan rekomendasi yang bersifat general, berdasarkan kesukaan mayoritas pengguna.
-
 - **Menentukan Popularity Score**
 popularity_score dibuat dari kombinasi fitur yang telah dinormalisasi: rating_score, year_score, dan episode_score. Skor ini mewakili seberapa populer dan relevan suatu drama secara umum. Langkah pengujian model diterapkan melalui potongan kode berikut ini:
 
@@ -240,4 +246,63 @@ Dua pendekatan sistem rekomendasi yang telah diterapkan:
 | Popularity-Based       | Sederhana dan cocok untuk semua pengguna               | Tidak personal dan bias terhadap item populer atau lama |
 
 ## 📊 Evaluation
+Untuk mengevaluasi sistem rekomendasi yang dibangun, digunakan pendekatan evaluasi yang sesuai dengan jenis algoritma yang diterapkan. Karena sistem rekomendasi tidak memiliki label ground-truth eksplisit seperti supervised learning, maka evaluasi dilakukan secara heuristik menggunakan metrik yang sesuai dengan masing-masing pendekatan.
+
+### Content-Based FIltering
+#### Evaluasi Kualitatif
+Pendekatan ini menggunakan top-N recommendation untuk mengukur kualitas rekomendasi berdasarkan kemiripan konten dengan item yang disukai pengguna.
+
+**Contoh:**
+- Input: Twinkling Watermelon
+- Output Rekomendasi:
+   - The Sound of Magic
+   - High School Return of a Gangster
+   - My Unfamiliar Family
+   - The King's Affection
+   - Reply 1997
+     
+Rekomendasi menunjukkan kemiripan tema, genre, dan nuansa emosional, menunjukkan keberhasilan model dalam mengenali karakteristik konten menggunakan TF-IDF dan cosine similarity.
+
+##### Metrik Evaluasi 
+- Precision@K
+  
+$$
+\text{Precision@K} = \frac{\text{Jumlah item relevan dalam top-K}}{K}
+$$
+
+Digunakan untuk mengukur seberapa banyak dari rekomendasi yang diberikan termasuk item yang relevan bagi pengguna.
+
+- Coverage
+
+$$
+\text{Recency Score} = \frac{\text{Jumlah item yang dapat direkomendasikan}}{\text{Total item}}
+$$
+
+Mengukur seberapa besar cakupan sistem dalam merekomendasikan item berbeda dari seluruh katalog
+
+### Popularity-Based Recommendation
+#### Evaluasi Heuristik
+Dilakukan dengan tiga skenario:
+- Berdasarkan rating tertinggi → Menampilkan drama top dengan rating 9.0+.
+- Berdasarkan genre → Menampilkan drama populer dalam kategori tertentu.
+- Gabungan rating dan genre → Rekomendasi populer tetapi sesuai preferensi genre pengguna.
+  
+Hasil menunjukkan rekomendasi umumnya relevan, dan mencakup drama-drama terkenal serta berkualitas tinggi
+
+##### Metrik Evaluasi
+- Coverage: Cenderung rendah karena hanya fokus pada item populer.
+- Novelty:
+
+$$
+\text{Novelty}(i) \propto \frac{1}{\log_2(1 + popularity(i))}
+$$
+
+Metrik ini mengukur seberapa tidak populer suatu item, yang berarti rekomendasi lebih segar dan tidak biasa.
+
+> Dalam pendekatan berbasis popularitas, novelty cenderung rendah karena semua item populer dan sudah banyak dikenal.
 ## Referensi
+[1] Korea Creative Content Agency (KOCCA). (2023). _2022 Content Industry Statistics Report_.
+
+[2] Ricci, F., Rokach, L., & Shapira, B. (2015). _Recommender Systems Handbook. Springer_.
+
+[3] Aggarwal, C. C. (2016)._ Recommender Systems: The Textbook. Springer._
