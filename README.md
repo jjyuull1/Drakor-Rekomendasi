@@ -66,6 +66,9 @@ Berikut adalah uraian dari masing-masing fitur dalam dataset:
 | Genre               | object    | Genre utama drama, bisa lebih dari satu.                                 |
 | Tags                | object    | Label tambahan, seperti tema, gaya cerita, dll.                          |
 | Actors              | object    | Daftar pemeran utama.                                                    |
+#### Kondisi Data
+- Berdasarkan pengecekan menggunakan df.isnull().sum(), tidak ditemukan missing value pada dataset. Hal ini mengindikasikan bahwa data sudah lengkap dan tidak memerlukan imputasi atau pengisian nilai yang hilang.
+- Hasil dari df.duplicated().sum() juga menunjukkan bahwa tidak terdapat data duplikat. Ini memastikan bahwa setiap drama direpresentasikan secara unik dalam dataset.
 
 ### Visualization & Analysis
 1. Distribusi Jumlah Drama Berdasarkan Tahun Rilis
@@ -109,7 +112,19 @@ Tahapan ini bertujuan untuk menyiapkan data agar dapat digunakan dalam proses pe
 Beberapa kolom teks yang relevan seperti `Genre`, `Tags`, `Actors`dan `Description` digabung menjadi satu fitur baru bernama `combined_features` untuk membentuk representasi konten setiap drama. Tujuannya adalah untuk mengekstrak informasi penting yang menggambarkan karakteristik drama secara keseluruhan.
 >Contoh hasil gabungan fitur: _Life,  Drama,  Family  Autism, Uncle-Nephew Relationship, Death, Savant Syndrome, Mourning, Tearjerker, Father-Son Relationship, Life Lesson, Ex-convict, Cleaning And Organizing Lee Je Hoon, Tang Jun ..._
 
-Fitur gabungan ini digunakan sebagai input utama dalam sistem rekomendasi berbasis konten. Teknik seperti **TF-IDF** dan **cosine similarity** memanfaatkan teks gabungan ini untuk menghitung kemiripan antar drama berdasarkan isi kontennya.
+- **TF-IDF Vectorization**
+  
+Setelah membuat fitur `combined_features` yang berisi gabungan teks dari kolom `Genre`, `Tags`, `Actors`, dan `Description`, dilakukan transformasi teks menjadi representasi numerik menggunakan teknik **TF-IDF (Term Frequency–Inverse Document Frequency)** dengan bantuan pustaka `TfidfVectorizer` dari Scikit-learn.
+
+TF-IDF mengubah teks menjadi vektor angka berdasarkan seberapa sering suatu kata muncul dalam satu dokumen. Teknik ini bertujuan untuk menekankan kata-kata unik dan mengurangi pengaruh kata-kata umum, sehingga menghasilkan representasi numerik yang lebih relevan untuk menghitung kemiripan antar drama. Hasil dari TF-IDF ini nantinya digunakan dalam sistem rekomendasi berbasis konten dengan teknik Cosine Similarity.
+
+##### Berikut adalah implementasi kode TF-IDF menggunakan Scikit-learn:
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(df['combined_features'])
+````
 
 ### Feature Engineering: Popularity-Based Filtering
    - **Normalisasi Rating**
@@ -157,10 +172,6 @@ Berikut adalah ringkasan statistik deskriptif dan fitur-fitur skor yang telah di
 ## 🤖 Modeling & Result
 Pada tahap ini, sistem rekomendasi dikembangkan untuk memberikan rekomendasi drama Korea berdasarkan dua pendekatan yang berbeda: _Content-Based Filtering_ dan _Popularity-Based Recommendation_. Kedua pendekatan ini dirancang untuk memberikan solusi atas masalah rekomendasi, baik berdasarkan kesamaan konten maupun berdasarkan tingkat popularitas umum.
 ### Content Based Filtering
--  **TF-IDF Vectorization**
-  
-Untuk mengubah teks menjadi vektor numerik, digunakan teknik **TF-IDF (Term Frequency-Inverse Document Frequency)** pada fitur gabungan `combined_features`. Teknik ini menekankan kata-kata penting yang unik pada setiap drama dan mengurangi pengaruh kata-kata umum.
-
 - **Menghitung Cosine Similarity**
   
 Kemiripan antar drama dihitung menggunakan **Cosine Similarity**, yang mengukur sudut antar vektor TF-IDF. Semakin kecil sudutnya, semakin mirip konten dua drama tersebut. Hasilnya disimpan dalam dataframe `cosine_sim_df` yang menyimpan skor kesamaan antar semua pasangan drama.
@@ -253,11 +264,10 @@ Dua pendekatan sistem rekomendasi yang telah diterapkan:
 Untuk mengevaluasi sistem rekomendasi yang dibangun, digunakan pendekatan evaluasi yang sesuai dengan jenis algoritma yang diterapkan. Karena sistem rekomendasi tidak memiliki label ground-truth eksplisit seperti supervised learning, maka evaluasi dilakukan secara heuristik menggunakan metrik yang sesuai dengan masing-masing pendekatan.
 
 ### Content-Based FIltering
-#### Evaluasi Kualitatif
 Pendekatan ini menggunakan top-N recommendation untuk mengukur kualitas rekomendasi berdasarkan kemiripan konten dengan item yang disukai pengguna.
 
 **Contoh:**
-- Input: Twinkling Watermelon
+- Input: `Twinkling Watermelon`
 - Output Rekomendasi:
    - The Sound of Magic
    - High School Return of a Gangster
@@ -265,24 +275,30 @@ Pendekatan ini menggunakan top-N recommendation untuk mengukur kualitas rekomend
    - The King's Affection
    - Reply 1997
      
-Rekomendasi menunjukkan kemiripan tema, genre, dan nuansa emosional, menunjukkan keberhasilan model dalam mengenali karakteristik konten menggunakan TF-IDF dan cosine similarity.
+Rekomendasi di atas menunjukkan kemiripan dalam genre (romance, youth, fantasy) dan tema emosional atau keluarga, menunjukkan bahwa sistem berhasil menangkap konten yang relevan.
 
-##### Metrik Evaluasi 
-- Precision@K
+#### Metrik Evaluasi 
+##### 1. Precision@K
+
+Precision@K mengukur seberapa banyak item yang relevan dari total K rekomendasi.
+- Setiap 5 rekomendasi yang diberikan, rata-rata 2.4 di antaranya dianggap relevan (karena saling merekomendasikan kembali).
   
 $$
-\text{Precision@K} = \frac{\text{Jumlah item relevan dalam top-K}}{K}
+\text{Precision@5} = \frac{2.4}{5} = 0.48
 $$
 
-Digunakan untuk mengukur seberapa banyak dari rekomendasi yang diberikan termasuk item yang relevan bagi pengguna.
+> **Hasil**: Precision@5 = **0.48**
 
-- Coverage
-
+##### 2. Coverage
+Coverage mengukur seberapa besar cakupan sistem dalam merekomendasikan item dari seluruh dataset. Semakin tinggi nilai coverage, semakin besar variasi item yang mampu direkomendasikan.
+- Jumlah item unik yang muncul sebagai rekomendasi dari seluruh pengguna: **319**
+- Jumlah total drama dalam dataset: **350**
+  
 $$
-\text{Coverage} = \frac{\text{Jumlah item yang dapat direkomendasikan}}{\text{Total item}}
+\text{Coverage} = \frac{319}{200} = 0.9114
 $$
 
-Mengukur seberapa besar cakupan sistem dalam merekomendasikan item berbeda dari seluruh katalog
+> **Hasil**: Coverage = **0.9114** atau 91.14%
 
 ### Popularity-Based Recommendation
 #### Evaluasi Heuristik
@@ -293,18 +309,38 @@ Dilakukan dengan tiga skenario:
   
 Hasil menunjukkan rekomendasi umumnya relevan dan mencakup drama-drama terkenal serta berkualitas tinggi
 
-##### Metrik Evaluasi
-- Coverage: Cenderung rendah karena hanya fokus pada item populer.
-- Novelty:
+#### Metrik Evaluasi
+##### 1. Coverage
+Karena hanya item dengan skor populer yang muncul, cakupan sistem ini rendah.
+- Item unik yang pernah direkomendasikan: 26
+- Total drama: 350
+  
+$$
+\text{Coverage} = \frac{26}{200} = 0.0743
+$$
+
+> **Hasil**: Coverage = 0.0743 atau 7,43%
+
+##### 2. Novelty
+Novelty mengukur kebaruan rekomendasi. Sistem popularitas cenderung merekomendasikan item yang umum diketahui.
 
 $$
 \text{Novelty}(i) \propto \frac{1}{\log_2(1 + popularity(i))}
 $$
 
-Novelty mengukur seberapa tidak umum item yang direkomendasikan. Semakin tinggi novelty, semakin bagus rekomendasinya.
+> Estimasi Novelty (Rata-Rata) = **1.1510**
 
-> Dalam pendekatan berbasis popularitas, novelty cenderung rendah karena semua item populer dan sudah banyak dikenal.
+#### Kesimpulan Evaluasi
+| Pendekatan              | Precision@5 | Coverage | Novelty  |
+|------------------------|-------------|----------|----------|
+| Content-Based Filtering | 0.48        | 0.9114   | -        |
+| Popularity-Based        | -           | 0.0743   | 1.1510   |
 
+- **Content-Based Filtering** memberikan keseimbangan antara akurasi rekomendasi (precision) dan cakupan item (coverage), sehingga cocok untuk personalisasi yang berfokus pada preferensi unik tiap pengguna. Sistem ini memungkinkan eksplorasi lebih luas karena hampir semua item dapat direkomendasikan.
+  
+- **Popularity-Based Recommendation** memiliki cakupan dan kemungkinan relevansi yang rendah, karena hanya merekomendasikan item yang banyak ditonton atau disukai secara global. Metode ini lebih sederhana dan cepat, cocok untuk pengguna baru atau saat data preferensi pengguna masih minim.
+
+  
 ## Referensi
 [1] Korea Creative Content Agency (KOCCA). (2023). _2022 Content Industry Statistics Report_.
 
