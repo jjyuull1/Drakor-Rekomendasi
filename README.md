@@ -30,6 +30,7 @@ Salah satu pendekatan yang dapat digunakan adalah Content-Based Filtering. Pende
 ### Solusi Approach
 Untuk mencapai tujuan proyek ini, dua pendekatan utama dalam sistem rekomendasi akan digunakan dan dibandingkan:
 1. **Content-Based Filtering**
+   
    Pendekatan dalam sistem rekomendasi yang menyarankan item kepada pengguna berdasarkan kesamaan fitur antara item yang pernah disukai dengan item lainnya. Dalam konteks rekomendasi drama Korea, pendekatan ini bekerja dengan menganalisis atribut-atribut seperti genre, sinopsis, aktor, sutradara, dan elemen naratif lainnya. Fitur-fitur teks seperti sinopsis atau deskripsi dapat diolah menggunakan teknik ekstraksi fitur seperti TF-IDF (Term Frequency–Inverse Document Frequency), yang mengubah teks menjadi representasi numerik. Setelah itu, sistem menghitung kemiripan antar item menggunakan cosine similarity, yaitu teknik yang mengukur sudut antar vektor representasi teks. Rekomendasi kemudian diberikan berdasarkan item yang paling mirip dengan apa yang pernah ditonton atau disukai pengguna. Sistem ini bersifat personal, karena rekomendasi tidak bergantung pada perilaku pengguna lain, melainkan pada karakteristik konten dari drama yang telah disukai sebelumnya.<sup>[2]</sup>
 
 
