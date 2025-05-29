@@ -118,7 +118,7 @@ Setelah membuat fitur `combined_features` yang berisi gabungan teks dari kolom `
 
 TF-IDF mengubah teks menjadi vektor angka berdasarkan seberapa sering suatu kata muncul dalam satu dokumen. Teknik ini bertujuan untuk menekankan kata-kata unik dan mengurangi pengaruh kata-kata umum, sehingga menghasilkan representasi numerik yang lebih relevan untuk menghitung kemiripan antar drama. Hasil dari TF-IDF ini nantinya digunakan dalam sistem rekomendasi berbasis konten dengan teknik Cosine Similarity.
 
-##### Berikut adalah implementasi kode TF-IDF menggunakan Scikit-learn:
+#### Berikut adalah implementasi kode TF-IDF menggunakan Scikit-learn:
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
 
