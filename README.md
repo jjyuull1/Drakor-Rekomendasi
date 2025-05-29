@@ -321,7 +321,7 @@ $$
 > **Hasil**: Coverage = 0.0743 atau 7,43%
 
 ##### 2. Novelty
-Novelty mengukur kebaruan rekomendasi. Sistem popularitas cenderung merekomendasikan item yang umum diketahui.
+Novelty mengukur kebaruan rekomendasi. Sistem popularitas cenderung merekomendasikan item yang umum diketahui dan cenderung rendah.
 
 $$
 \text{Novelty}(i) \propto \frac{1}{\log_2(1 + popularity(i))}
@@ -345,4 +345,4 @@ $$
 
 [2] Ricci, F., Rokach, L., & Shapira, B. (2015). _Recommender Systems Handbook. Springer_.
 
-[3] Aggarwal, C. C. (2016)._ Recommender Systems: The Textbook. Springer._
+[3] Aggarwal, C. C. (2016). _Recommender Systems: The Textbook. Springer._
