@@ -301,7 +301,6 @@ $$
 > **Hasil**: Coverage = **0.9114** atau 91.14%
 
 ### Popularity-Based Recommendation
-#### Evaluasi Heuristik
 Dilakukan dengan tiga skenario:
 - Berdasarkan rating tertinggi (Menampilkan drama top dengan rating 9.0+).
 - Berdasarkan genre  (Menampilkan drama populer dalam kategori tertentu).
